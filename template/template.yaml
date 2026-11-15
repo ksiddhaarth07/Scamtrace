@@ -1,0 +1,262 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  ScamTrace community scam-intelligence MVP.
+  Serverless: API Gateway HTTP API → Lambda (Python) → DynamoDB.
+  No S3 (text-only MVP, no file upload).
+  No Step Functions (synchronous single-step analysis).
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Parameters
+# ──────────────────────────────────────────────────────────────────────────────
+Parameters:
+  AllowedOrigin:
+    Type: String
+    AllowedPattern: '^https://[A-Za-z0-9.-]+(:[0-9]+)?$'
+    ConstraintDescription: Provide an HTTPS origin without a path or wildcard, for example https://scamtrace.example.com.
+    Description: >
+      HTTPS origin of the deployed frontend (e.g. https://scamtrace.example.com).
+      MUST be set to a specific origin before any public-facing deployment.
+      Do not leave as '*' in production.
+
+  ModeratorToken:
+    Type: String
+    NoEcho: true
+    MinLength: 32
+    AllowedPattern: '^[A-Za-z0-9_-]{32,}$'
+    Description: >
+      Secret token that the moderation UI sends as the x-mod-token header.
+      Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+      Store in AWS Secrets Manager or SSM Parameter Store rather than hard-coding.
+
+  LogRetentionDays:
+    Type: Number
+    Default: 30
+    AllowedValues: [7, 14, 30, 60, 90]
+    Description: CloudWatch log retention for Lambda function logs.
+
+  ThrottleBurst:
+    Type: Number
+    Default: 50
+    Description: API Gateway burst limit (requests per second, peak).
+
+  ThrottleRate:
+    Type: Number
+    Default: 20
+    Description: API Gateway sustained rate limit (requests per second).
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Global defaults for all Serverless functions
+# ──────────────────────────────────────────────────────────────────────────────
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 10
+    MemorySize: 256
+    Architectures: [arm64]
+    Tracing: Active
+    # Structured JSON logging for CloudWatch Insights queries.
+    LoggingConfig:
+      LogFormat: JSON
+      ApplicationLogLevel: INFO
+      SystemLogLevel: WARN
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Resources
+# ──────────────────────────────────────────────────────────────────────────────
+Resources:
+
+  # ── API Gateway HTTP API ──────────────────────────────────────────────────
+  ScamTraceApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Description: ScamTrace community intelligence API
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref AllowedOrigin
+        AllowHeaders:
+          - content-type
+          - x-mod-token
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        MaxAge: 300
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: !Ref ThrottleBurst
+        ThrottlingRateLimit: !Ref ThrottleRate
+      AccessLogSettings:
+        # Logs are structured and exclude request bodies and caller IPs.
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: >-
+          {"requestId":"$context.requestId","method":"$context.httpMethod",
+          "route":"$context.routeKey","status":"$context.status",
+          "responseLength":"$context.responseLength","responseLatency":"$context.responseLatency"}
+
+  # ── CloudWatch log groups (explicit, with retention) ─────────────────────
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/apigateway/scamtrace-access-${AWS::StackName}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  ScamTraceFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/ScamTraceFunction-${AWS::StackName}'
+      RetentionInDays: !Ref LogRetentionDays
+
+  # ── DynamoDB table ────────────────────────────────────────────────────────
+  ReportsTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub 'ScamTraceReports-${AWS::StackName}'
+      BillingMode: PAY_PER_REQUEST
+      # pk = REPORT#<sha256-of-uuid> | INDICATOR#<id>
+      # sk = v0 (versioned for future migrations)
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: N
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: StatusIndex
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      # Automatic expiry of private reports after 90 days.
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      # Protect against accidental data loss.
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      # Encrypt at rest using AWS-managed key (SSE-S3 equivalent in DynamoDB).
+      SSESpecification:
+        SSEEnabled: true
+      # Tag for cost allocation and policy enforcement.
+      Tags:
+        - Key: Project
+          Value: ScamTrace
+        - Key: DataClassification
+          Value: Private
+
+  # ── Lambda function ────────────────────────────────────────────────────────
+  ScamTraceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'ScamTraceFunction-${AWS::StackName}'
+      Description: ScamTrace API handler — analyze, reports, signals, moderate
+      CodeUri: src/
+      Handler: handler.handler
+      # Reference the explicit log group so SAM does not create a default one.
+      LoggingConfig:
+        LogGroup: !Ref ScamTraceFunctionLogGroup
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ReportsTable
+          CORS_ORIGIN: !Ref AllowedOrigin
+          # Moderator token is passed as an env var; store the value in
+          # Secrets Manager and use a SecretValue reference in real deployments.
+          MODERATOR_TOKEN: !Ref ModeratorToken
+      # Least-privilege IAM: only the operations this function actually needs.
+      Policies:
+        - Statement:
+            - Sid: WriteReports
+              Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: !GetAtt ReportsTable.Arn
+            - Sid: ReadAndUpdateForModeration
+              Effect: Allow
+              Action:
+                - dynamodb:UpdateItem
+              Resource: !GetAtt ReportsTable.Arn
+            - Sid: QueryStatusIndex
+              Effect: Allow
+              Action:
+                - dynamodb:Query
+              Resource: !Sub '${ReportsTable.Arn}/index/StatusIndex'
+            # Allow X-Ray tracing.
+            - Sid: XRayTracing
+              Effect: Allow
+              Action:
+                - xray:PutTraceSegments
+                - xray:PutTelemetryRecords
+              Resource: '*'
+      ReservedConcurrentExecutions: 20
+      Events:
+        Analyze:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScamTraceApi
+            Path: /analyze
+            Method: POST
+        Reports:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScamTraceApi
+            Path: /reports
+            Method: POST
+        Signals:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScamTraceApi
+            Path: /signals
+            Method: GET
+        ModerateGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScamTraceApi
+            Path: /moderate
+            Method: GET
+        ModeratePost:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ScamTraceApi
+            Path: /moderate
+            Method: POST
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Outputs
+# ──────────────────────────────────────────────────────────────────────────────
+Outputs:
+  ApiUrl:
+    Description: >
+      API endpoint URL.
+      After deployment: set window.SCAMTRACE_API = '<ApiUrl>' in public/config.js
+      and deploy the static UI over HTTPS.
+    Value: !Sub 'https://${ScamTraceApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiUrl'
+
+  ReportsTableName:
+    Description: DynamoDB table name for private reports.
+    Value: !Ref ReportsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-ReportsTableName'
+
+  FunctionArn:
+    Description: Lambda function ARN.
+    Value: !GetAtt ScamTraceFunction.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionArn'

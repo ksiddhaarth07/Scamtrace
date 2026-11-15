@@ -1,0 +1,7 @@
+node_modules/
+.aws-sam/
+.env
+work/aws-tools/
+work/AWS_SAM_CLI_64_PY3.msi
+__pycache__/
+.pytest_cache/

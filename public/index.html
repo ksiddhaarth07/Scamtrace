@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101819">
+  <meta name="description" content="ScamTrace — community scam intelligence. Check suspicious URLs and messages, submit reports, and explore synthetic threat patterns.">
+  <title>ScamTrace — Signal over noise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<!-- Skip link for keyboard users -->
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<div class="shell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" aria-label="Navigation">
+    <a class="brand" href="#overview" aria-label="ScamTrace home">
+      <span class="brand-mark" aria-hidden="true">s<span>↗</span></span>
+      <span>scamtrace<small>COMMUNITY INTELLIGENCE</small></span>
+    </a>
+
+    <div class="workspace-label" aria-hidden="true">WORKSPACE <span>⌄</span></div>
+
+    <nav aria-label="Sections">
+      <a class="nav active" href="#overview" aria-current="page"><span aria-hidden="true">◫</span> Overview</a>
+      <a class="nav" href="#analyze"><span aria-hidden="true">⌕</span> Analyze a threat</a>
+      <a class="nav" href="#reports"><span aria-hidden="true">◉</span> Community reports</a>
+      <a class="nav" href="#signals"><span aria-hidden="true">⌘</span> Threat intelligence</a>
+      <a class="nav" href="#moderation"><span aria-hidden="true">⚑</span> Moderation</a>
+    </nav>
+
+    <div class="side-bottom">
+      <div class="privacy-card" role="note">
+        <span class="shield" aria-hidden="true">◈</span>
+        <div>
+          <strong>Your safety comes first</strong>
+          <p>ScamTrace never opens suspicious links or asks for sensitive information.</p>
+          <a href="/architecture.html">How we protect you ↗</a>
+        </div>
+      </div>
+      <div class="user-chip" aria-label="Current workspace: Public, Community edition">
+        <span class="avatar" aria-hidden="true">ST</span>
+        <span>Public workspace<small>Community edition</small></span>
+        <span class="dots" aria-hidden="true">···</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main" id="main-content">
+
+    <header class="topbar" role="banner">
+      <div class="crumb" aria-label="Current location"><span aria-hidden="true">Workspace /</span> <b>Overview</b></div>
+      <div class="top-actions">
+        <span class="live" aria-label="Community edition active"><i aria-hidden="true"></i> COMMUNITY EDITION</span>
+        <button class="icon-btn" aria-label="Notifications">♧</button>
+        <span class="avatar small-avatar" aria-hidden="true">ST</span>
+      </div>
+    </header>
+
+    <section class="content" id="overview" aria-label="Overview">
+
+      <!-- Welcome banner -->
+      <div class="welcome" role="region" aria-label="Welcome">
+        <div>
+          <div class="eyebrow"><span aria-hidden="true"></span> COMMUNITY THREAT DESK</div>
+          <h1>See the signal.<br><em>Stop the scam.</em></h1>
+          <p>One suspicious link can reach thousands. Share what you find, protect the next person.</p>
+          <div class="notice demo" style="margin-top:14px;max-width:420px" role="note">
+            <span class="notice-icon" aria-hidden="true">ℹ</span>
+            <span>ScamTrace is a demo MVP. Threat indicators are <strong>synthetic sample data</strong>, not live intelligence. Analysis is advisory heuristics only.</span>
+          </div>
+        </div>
+        <div class="welcome-art" aria-hidden="true">
+          <div class="ring ring-one"></div>
+          <div class="ring ring-two"></div>
+          <div class="radar-core">⌁</div>
+          <span class="radar-dot d1"></span>
+          <span class="radar-dot d2"></span>
+          <span class="radar-dot d3"></span>
+          <span class="art-caption">SAMPLE SIGNALS <b>✦ DEMO MODE</b></span>
+        </div>
+      </div>
+
+      <!-- Main grid: Analyze + Report -->
+      <div class="grid">
+
+        <!-- Analyze panel -->
+        <section class="panel analyze-panel" id="analyze" aria-labelledby="analyze-heading">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">QUICK CHECK</div>
+              <h2 id="analyze-heading">Is something off?</h2>
+            </div>
+            <span class="safe-badge" aria-label="Private by design">✳ PRIVATE BY DESIGN</span>
+          </div>
+          <p class="muted">Paste a suspicious URL or message. We look for warning signs without opening links.</p>
+
+          <div class="tabs" role="tablist" aria-label="Input type">
+            <button class="tab active" data-kind="url" role="tab" aria-selected="true" aria-controls="analyze-form">↗ &nbsp; URL</button>
+            <button class="tab" data-kind="message" role="tab" aria-selected="false" aria-controls="analyze-form">▤ &nbsp; Message</button>
+          </div>
+
+          <form id="analyze-form" novalidate>
+            <label class="input-label" for="analyze-input" id="input-label">SUSPICIOUS URL</label>
+            <div class="input-wrap">
+              <textarea
+                id="analyze-input"
+                rows="2"
+                placeholder="https://something-doesnt-feel-right.com"
+                maxlength="2000"
+                aria-describedby="analyze-hint analyze-error analyze-char-count"
+              ></textarea>
+              <span class="input-icon" aria-hidden="true">⌕</span>
+            </div>
+            <div id="analyze-hint" class="input-hint">◈ &nbsp;Your input is analyzed locally and never shared publicly.</div>
+            <div id="analyze-error" class="field-error" role="alert" aria-live="assertive"></div>
+            <div id="analyze-char-count" class="char-counter" aria-live="polite">0 / 2000</div>
+            <div class="form-foot">
+              <button class="primary-btn" type="submit" id="analyze-btn">Analyze signal <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <div id="analysis-result" class="result hidden" aria-live="polite" aria-label="Analysis result"></div>
+
+          <div class="example-line">
+            Try an example:
+            <button data-example="url" type="button">Fake delivery notice</button>
+            <button data-example="message" type="button">Urgent bank text</button>
+          </div>
+
+          <div class="analysis-guide" aria-label="What your analysis includes">
+            <div class="analysis-guide-title">YOUR CHECK INCLUDES</div>
+            <div class="analysis-guide-items">
+              <span><i>01</i><b>Risk rating</b></span>
+              <span><i>02</i><b>Warning signs</b></span>
+              <span><i>03</i><b>Next steps</b></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Report panel -->
+        <section class="panel report-panel" id="reports" aria-labelledby="report-heading">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">STRENGTH IN NUMBERS</div>
+              <h2 id="report-heading">Report a scam</h2>
+            </div>
+            <span class="report-icon" aria-hidden="true">＋</span>
+          </div>
+          <p class="muted">Your report helps the whole community recognize the same playbook. Never include personal, financial, or account information.</p>
+
+          <form id="report-form" novalidate>
+            <label for="report-type">WHAT DID YOU ENCOUNTER?</label>
+            <div class="select-row">
+              <select id="report-type" aria-label="Scam category">
+                <option value="Phishing URL">Phishing URL</option>
+                <option value="SMS / text message">SMS / text message</option>
+                <option value="Email scam">Email scam</option>
+                <option value="Impersonation">Impersonation</option>
+                <option value="Payment fraud">Payment fraud</option>
+              </select>
+            </div>
+            <label for="report-detail">DESCRIBE IT (NO PERSONAL DETAILS)</label>
+            <textarea
+              id="report-detail"
+              rows="3"
+              required
+              placeholder="What happened? E.g. 'SMS claiming a parcel is held, asking for a small redelivery fee via link.'"
+              maxlength="1000"
+              aria-describedby="report-hint report-error report-char-count"
+            ></textarea>
+            <div id="report-hint" class="input-hint">◈ &nbsp;Never include passwords, PINs, or personal data. Common identifiers are auto-redacted before storage.</div>
+            <div id="report-error" class="field-error" role="alert" aria-live="assertive"></div>
+            <div id="report-char-count" class="char-counter" aria-live="polite">0 / 1000</div>
+            <div class="report-bottom">
+              <button class="outline-btn" type="submit" id="report-btn">Submit report <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+
+          <div id="report-result" class="report-success hidden" aria-live="polite" role="status"></div>
+
+          <div class="notice info" role="note" style="margin-top:4px">
+            <span class="notice-icon" aria-hidden="true">ℹ</span>
+            <span>Reports are stored privately with auto-expiry after 90 days. They are excluded from the public feed until a moderator reviews them. Raw report text is never shown in public API responses.</span>
+          </div>
+        </section>
+
+      </div><!-- .grid -->
+
+      <!-- Stats strip -->
+      <div class="stats" role="region" aria-label="Summary statistics">
+        <article>
+          <span>SAMPLE INDICATORS</span>
+          <strong>8</strong>
+          <small><span class="stats-note">Synthetic demo data only</span></small>
+          <b class="spark s1" aria-hidden="true">▁▂▃▂▄▅▆▅▇</b>
+        </article>
+        <article>
+          <span>ANALYSIS RULES</span>
+          <strong>15</strong>
+          <small><span>Heuristic signals checked</span></small>
+          <b class="spark s2" aria-hidden="true">▁▂▂▄▃▅▄▆▇</b>
+        </article>
+        <article>
+          <span>DATA RETAINED</span>
+          <strong>90 <small>days</small></strong>
+          <small><span>Then reports auto-expire</span></small>
+          <b class="spark s3" aria-hidden="true">▁▂▃▄▃▅▆▆▇</b>
+        </article>
+        <article>
+          <span>SIGNAL CATEGORIES</span>
+          <strong class="signal-num">6 <small>types</small></strong>
+          <small><span class="neutral-dot" aria-hidden="true"></span> <span>URL, SMS, Email, Payment…</span></small>
+          <b class="spark s4" aria-hidden="true">▁▃▂▄▅▄▆▇▆</b>
+        </article>
+      </div>
+
+      <!-- Intel panel -->
+      <section class="panel intel-panel" id="signals" aria-labelledby="signals-heading">
+        <div class="intel-heading">
+          <div>
+            <div class="eyebrow">COMMUNITY PULSE <span class="pulse-dot" aria-hidden="true"></span></div>
+            <h2 id="signals-heading">Emerging threat signals</h2>
+            <p class="muted">
+              <strong>Synthetic sample data only</strong> — these records are illustrative examples,
+              not live or verified threat intelligence.
+            </p>
+          </div>
+          <div class="search-area" role="search" aria-label="Search threat signals">
+            <label class="searchbox" for="search-input">
+              <span aria-hidden="true">⌕</span>
+              <input id="search-input" placeholder="Search threats, URLs, keywords…" type="search" aria-label="Search signals">
+            </label>
+            <select id="filter-severity" aria-label="Filter by risk level">
+              <option value="all">All risk levels</option>
+              <option value="High">High risk</option>
+              <option value="Medium">Medium risk</option>
+              <option value="Low">Low risk</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="feed-notice" class="notice warning hidden" role="note" aria-live="polite" style="margin-bottom:8px">
+          <span class="notice-icon" aria-hidden="true">⚠</span>
+          <span id="feed-notice-text"></span>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Threat indicator table">
+          <table aria-label="Threat indicators">
+            <thead>
+              <tr>
+                <th scope="col">THREAT INDICATOR</th>
+                <th scope="col">TYPE</th>
+                <th scope="col">RISK</th>
+                <th scope="col">FIRST SEEN</th>
+                <th scope="col">REPORTS</th>
+                <th scope="col">STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="threat-rows" aria-live="polite" aria-label="Signal rows"></tbody>
+          </table>
+          <div class="empty-state hidden" id="empty-state" role="status">No matching signals. Try a broader search.</div>
+        </div>
+        <p class="table-scroll-hint">Swipe the table to see every detail <span aria-hidden="true">→</span></p>
+
+        <div class="table-footer">
+          <span>Showing <b id="showing-count">—</b> of <b id="total-count">—</b> sample indicators</span>
+          <nav id="pagination" aria-label="Pagination" class="pagination"></nav>
+        </div>
+      </section>
+
+      <!-- Moderation panel -->
+      <section class="panel" id="moderation" aria-labelledby="mod-heading">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">INTERNAL</div>
+            <h2 id="mod-heading">Report moderation</h2>
+          </div>
+        </div>
+        <p class="muted">Review privately submitted community reports, dismiss duplicates, and promote verified patterns into the public feed.</p>
+
+        <div id="mod-panel">
+          <div class="notice info" role="note" style="margin-bottom:12px">
+            <span class="notice-icon" aria-hidden="true">ℹ</span>
+            <span>This console is protected by a moderator token checked server-side. Common email addresses and phone-like numbers are redacted before storage; never submit passwords, financial details, or other sensitive information.</span>
+          </div>
+
+          <div id="mod-auth-section">
+            <div class="notice warning" style="margin-bottom:12px" role="note">
+              <span class="notice-icon" aria-hidden="true">⚠</span>
+              <span>A deployed ScamTrace API and a configured <code>MODERATOR_TOKEN</code> are required to use this console. Without a live API the form is inactive.</span>
+            </div>
+            <form id="mod-login-form" class="mod-login" novalidate>
+              <label for="mod-token-input" class="input-label">MODERATOR TOKEN</label>
+              <input id="mod-token-input" type="password" placeholder="Enter moderator token…" autocomplete="current-password" aria-describedby="mod-auth-error">
+              <div id="mod-auth-error" class="field-error" role="alert" aria-live="assertive"></div>
+              <button class="primary-btn" type="submit" style="align-self:flex-start">Sign in <span aria-hidden="true">→</span></button>
+            </form>
+          </div>
+
+          <div id="mod-reports-section" class="hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <strong>Pending reports</strong>
+              <button class="text-btn" id="mod-refresh-btn" type="button">↻ Refresh</button>
+            </div>
+            <div id="mod-report-list" aria-live="polite" aria-label="Pending reports list" style="display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer id="privacy" role="contentinfo">
+        <span>SCAMTRACE <span class="footer-dot" aria-hidden="true">●</span> A COMMUNITY SAFETY PROJECT</span>
+        <span>Signals are synthetic samples. Analysis is advisory only. Always verify through official channels.</span>
+        <a href="/architecture.html">How it works ↗</a>
+      </footer>
+
+    </section><!-- .content -->
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" role="status" aria-live="polite" class="toast hidden"></div>
+
+<script src="/config.js"></script>
+<script src="/app.js"></script>
+<script>
+  // Wire mod-refresh button after app.js has loaded.
+  document.getElementById('mod-refresh-btn')?.addEventListener('click', () => {
+    if (typeof loadModReports === 'function') loadModReports();
+  });
+  // Wire feed-notice text from data attribute.
+  const fn = document.getElementById('feed-notice');
+  const fnt = document.getElementById('feed-notice-text');
+  if (fn && fnt) {
+    const observer = new MutationObserver(() => { fnt.textContent = fn.textContent; });
+  }
+</script>
+</body>
+</html>
+

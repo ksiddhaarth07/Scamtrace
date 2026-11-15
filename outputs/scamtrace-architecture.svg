@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1390" viewBox="0 0 1600 1390" role="img" aria-labelledby="title desc">
+  <title id="title">ScamTrace serverless architecture</title>
+  <desc id="desc">Architecture diagram showing visitor and moderator clients connecting through Amazon API Gateway to AWS Lambda, Amazon DynamoDB, and Amazon CloudWatch.</desc>
+  <defs>
+    <linearGradient id="canvas" x2="1" y2="1"><stop stop-color="#eadce9"/><stop offset=".55" stop-color="#cbd5ec"/><stop offset="1" stop-color="#c6c5dc"/></linearGradient>
+    <linearGradient id="frame" x2=".9" y2="1"><stop stop-color="#182039"/><stop offset=".55" stop-color="#141d35"/><stop offset="1" stop-color="#111a31"/></linearGradient>
+    <linearGradient id="glass" x2="1" y2="1"><stop stop-color="#293451" stop-opacity=".94"/><stop offset="1" stop-color="#1a2741" stop-opacity=".87"/></linearGradient>
+    <linearGradient id="hero" x2="1" y2="1"><stop stop-color="#263250"/><stop offset=".55" stop-color="#253451"/><stop offset="1" stop-color="#1a3848"/></linearGradient>
+    <linearGradient id="mint" x2="1"><stop stop-color="#c9fb88"/><stop offset="1" stop-color="#83e7a5"/></linearGradient>
+    <linearGradient id="violet" x2="1"><stop stop-color="#b28af0" stop-opacity=".28"/><stop offset="1" stop-color="#84d9de" stop-opacity=".08"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#15182c" flood-opacity=".22"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="30"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto-start-reverse"><path d="M1 1L10 6 1 11" fill="none" stroke="#c9f896" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto-start-reverse"><path d="M1 1L10 6 1 11" fill="none" stroke="#8edbff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#f3f5fb}
+      .kicker{font-size:13px;font-weight:700;letter-spacing:2.2px;fill:#c9f896}
+      .title{font-size:43px;font-weight:800;letter-spacing:-1.5px}
+      .subtitle{font-size:17px;fill:#b8c2d8}
+      .section{font-size:13px;font-weight:700;letter-spacing:2px;fill:#9ba9c5}
+      .h2{font-size:22px;font-weight:750;letter-spacing:-.4px}
+      .body{font-size:16px;fill:#c4cde0}
+      .small{font-size:14px;fill:#aebbd3}
+      .tiny{font-size:12px;fill:#9aa8c2;letter-spacing:.8px}
+      .chip{font-size:13px;font-weight:650;fill:#e4eaf8}
+      .service{font-size:12px;font-weight:700;letter-spacing:1.1px;fill:#c9f896}
+      .mono{font-family:"Cascadia Code","SFMono-Regular",Consolas,monospace}
+      .line{fill:none;stroke:#c9f896;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+      .logline{fill:none;stroke:#8edbff;stroke-width:2.4;stroke-dasharray:7 8;stroke-linecap:round;stroke-linejoin:round}
+      .card{fill:url(#glass);stroke:#e7edff;stroke-opacity:.18;stroke-width:1.3}
+      .softcard{fill:#ffffff;fill-opacity:.045;stroke:#edf2ff;stroke-opacity:.12;stroke-width:1}
+    </style>
+  </defs>
+
+  <rect width="1600" height="1390" fill="url(#canvas)"/>
+  <circle cx="170" cy="80" r="170" fill="#f5c7df" opacity=".45" filter="url(#soft)"/>
+  <circle cx="1430" cy="120" r="200" fill="#9dcdf0" opacity=".42" filter="url(#soft)"/>
+  <rect x="28" y="26" width="1544" height="1338" rx="34" fill="url(#frame)" stroke="#ffffff" stroke-opacity=".67" stroke-width="1.4" filter="url(#shadow)"/>
+  <ellipse cx="1130" cy="260" rx="420" ry="250" fill="#9b78e8" opacity=".12" filter="url(#soft)"/>
+  <ellipse cx="780" cy="730" rx="490" ry="300" fill="#5fcbbd" opacity=".07" filter="url(#soft)"/>
+
+  <!-- Header -->
+  <g transform="translate(88 78)">
+    <rect width="42" height="42" rx="12" fill="url(#mint)"/>
+    <text x="12" y="27" font-size="18" font-weight="850" fill="#172538">S↗</text>
+    <text x="60" y="17" class="kicker">SCAMTRACE · SERVERLESS AWS</text>
+    <text x="60" y="65" class="title">Architecture overview</text>
+    <text x="60" y="96" class="subtitle">A private-by-design threat screening and community review flow</text>
+    <rect x="1182" y="4" width="242" height="38" rx="19" fill="#c9f896" fill-opacity=".1" stroke="#c9f896" stroke-opacity=".28"/>
+    <circle cx="1203" cy="23" r="5" fill="#c9f896"/>
+    <text x="1218" y="28" class="service">SERVERLESS · NO LINK FETCHES</text>
+  </g>
+
+  <!-- Client layer -->
+  <text x="92" y="220" class="section">01  /  CLIENT EXPERIENCE</text>
+  <rect x="88" y="242" width="1424" height="190" rx="22" class="card" filter="url(#shadow)"/>
+  <rect x="112" y="266" width="666" height="142" rx="17" class="softcard"/>
+  <circle cx="148" cy="304" r="15" fill="#c9f896" fill-opacity=".16" stroke="#c9f896" stroke-opacity=".45"/>
+  <path d="M141 299h14v11h-14z M144 313h8" fill="none" stroke="#c9f896" stroke-width="1.7" stroke-linejoin="round"/>
+  <text x="179" y="306" class="h2">Visitor browser · ScamTrace UI</text>
+  <text x="140" y="344" class="small">Public threat screening and community intelligence</text>
+  <rect x="140" y="363" width="112" height="27" rx="13" fill="#c9f896" fill-opacity=".11"/><text x="155" y="382" class="chip mono">POST /analyze</text>
+  <rect x="261" y="363" width="108" height="27" rx="13" fill="#c9f896" fill-opacity=".11"/><text x="276" y="382" class="chip mono">POST /reports</text>
+  <rect x="378" y="363" width="103" height="27" rx="13" fill="#c9f896" fill-opacity=".11"/><text x="392" y="382" class="chip mono">GET /signals</text>
+
+  <rect x="800" y="266" width="688" height="142" rx="17" class="softcard"/>
+  <circle cx="836" cy="304" r="15" fill="#c49aff" fill-opacity=".17" stroke="#c49aff" stroke-opacity=".52"/>
+  <path d="M830 304l5 5 8-10" fill="none" stroke="#d7baff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="867" y="306" class="h2">Moderator console · token protected</text>
+  <text x="828" y="344" class="small">Private queue review · promote verified patterns · dismiss duplicates</text>
+  <rect x="828" y="363" width="128" height="27" rx="13" fill="#c49aff" fill-opacity=".14"/><text x="843" y="382" class="chip mono">GET /moderate</text>
+  <rect x="966" y="363" width="139" height="27" rx="13" fill="#c49aff" fill-opacity=".14"/><text x="981" y="382" class="chip mono">POST /moderate</text>
+  <text x="1124" y="382" class="tiny mono">x-mod-token</text>
+
+  <!-- Client to API arrows -->
+  <path d="M444 432V474H650V506" class="line" marker-end="url(#arrow)"/>
+  <path d="M1144 432V474H950V506" class="line" marker-end="url(#arrow)"/>
+  <rect x="674" y="454" width="252" height="32" rx="16" fill="#18223b" stroke="#c9f896" stroke-opacity=".28"/>
+  <text x="710" y="475" class="service">HTTPS · ROUTE REQUESTS</text>
+
+  <!-- API Gateway -->
+  <text x="92" y="534" class="section">02  /  EDGE &amp; ROUTING</text>
+  <rect x="230" y="552" width="1140" height="126" rx="22" class="card" filter="url(#shadow)"/>
+  <rect x="258" y="576" width="76" height="76" rx="20" fill="url(#mint)" fill-opacity=".16" stroke="#c9f896" stroke-opacity=".38"/>
+  <path d="M280 594h30v6h-30z M280 606h30v6h-30z M280 618h30v6h-30z" fill="none" stroke="#c9f896" stroke-width="2" stroke-linecap="round"/>
+  <text x="364" y="599" class="service">AMAZON API GATEWAY</text>
+  <text x="364" y="632" class="h2">HTTP API</text>
+  <text x="364" y="657" class="small">HTTPS endpoints · route-level throttling · strict CORS</text>
+  <rect x="1070" y="590" width="258" height="48" rx="16" fill="url(#violet)" stroke="#e7edff" stroke-opacity=".15"/>
+  <text x="1100" y="620" class="chip">Routes → Lambda integration</text>
+
+  <!-- API to Lambda -->
+  <path d="M800 678V724" class="line" marker-end="url(#arrow)"/>
+  <text x="820" y="710" class="tiny">INVOKES</text>
+
+  <!-- Lambda -->
+  <text x="92" y="750" class="section">03  /  SCREENING &amp; BUSINESS LOGIC</text>
+  <rect x="150" y="768" width="1300" height="244" rx="24" class="card" filter="url(#shadow)"/>
+  <rect x="180" y="796" width="76" height="76" rx="20" fill="#c9f896" fill-opacity=".15" stroke="#c9f896" stroke-opacity=".38"/>
+  <path d="M213 808l-13 26h14l-4 19 17-29h-14z" fill="#c9f896"/>
+  <text x="282" y="817" class="service">AWS LAMBDA</text>
+  <text x="282" y="850" class="h2">Python 3.12 · arm64 · 256 MB</text>
+  <text x="282" y="878" class="small">One managed function handles screening, report intake, and moderation actions.</text>
+  <line x1="180" y1="900" x2="1420" y2="900" stroke="#edf2ff" stroke-opacity=".12"/>
+
+  <rect x="180" y="920" width="382" height="66" rx="14" class="softcard"/>
+  <circle cx="204" cy="953" r="7" fill="#c9f896"/>
+  <text x="224" y="949" class="chip">Heuristic screening</text>
+  <text x="224" y="972" class="small">15 signals · score from 0 to 100</text>
+  <rect x="584" y="920" width="382" height="66" rx="14" class="softcard"/>
+  <circle cx="608" cy="953" r="7" fill="#8edbff"/>
+  <text x="628" y="949" class="chip">Privacy protection</text>
+  <text x="628" y="972" class="small">Email and phone details redacted</text>
+  <rect x="988" y="920" width="432" height="66" rx="14" class="softcard"/>
+  <circle cx="1012" cy="953" r="7" fill="#c49aff"/>
+  <text x="1032" y="949" class="chip">Moderator authentication</text>
+  <text x="1032" y="972" class="small">Constant-time token comparison</text>
+
+  <!-- Lambda to persistence -->
+  <path d="M542 1012V1060" class="line" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <rect x="345" y="1022" width="390" height="30" rx="15" fill="#141e35" stroke="#c9f896" stroke-opacity=".25"/>
+  <text x="375" y="1042" class="tiny">PRIVATE REPORT WRITES · REVIEWED SIGNAL READS</text>
+
+  <!-- Lambda logs to CloudWatch side path -->
+  <path d="M1370 615H1510V866" class="logline"/>
+  <path d="M1390 866H1510V1088H1452" class="logline" marker-end="url(#arrowBlue)"/>
+  <rect x="1324" y="1019" width="171" height="29" rx="14" fill="#141e35" stroke="#8edbff" stroke-opacity=".25"/>
+  <text x="1344" y="1039" class="tiny" fill="#8edbff">LOGS + METRICS</text>
+
+  <!-- Data layer -->
+  <text x="92" y="1092" class="section">04  /  DATA &amp; OPERATIONS</text>
+  <rect x="88" y="1110" width="832" height="192" rx="22" class="card" filter="url(#shadow)"/>
+  <!-- simple database icon -->
+  <ellipse cx="145" cy="1151" rx="25" ry="9" fill="#c9f896" fill-opacity=".2" stroke="#c9f896" stroke-opacity=".65" stroke-width="1.6"/>
+  <path d="M120 1151v49c0 5 11 9 25 9s25-4 25-9v-49 M120 1175c0 5 11 9 25 9s25-4 25-9 M120 1199c0 5 11 9 25 9s25-4 25-9" fill="none" stroke="#c9f896" stroke-opacity=".65" stroke-width="1.6"/>
+  <text x="190" y="1155" class="service">AMAZON DYNAMODB</text>
+  <text x="190" y="1185" class="h2">Encrypted threat &amp; report table</text>
+  <text x="124" y="1226" class="small mono">pk = REPORT#&lt;SHA-256&gt;   ·   sk = v0</text>
+  <text x="124" y="1253" class="small">StatusIndex: status + createdAt · 90-day TTL · point-in-time recovery</text>
+  <rect x="962" y="1110" width="550" height="192" rx="22" class="card" filter="url(#shadow)"/>
+  <circle cx="1012" cy="1158" r="24" fill="#8edbff" fill-opacity=".14" stroke="#8edbff" stroke-opacity=".55"/>
+  <path d="M1001 1168v-8h7v8 M1014 1168v-16h7v16 M1027 1168v-12h7v12" fill="none" stroke="#8edbff" stroke-width="2" stroke-linejoin="round"/>
+  <text x="1052" y="1155" class="service" fill="#8edbff">AMAZON CLOUDWATCH</text>
+  <text x="1000" y="1193" class="h2">Logs &amp; telemetry</text>
+  <text x="1000" y="1224" class="small">API Gateway + Lambda structured logs</text>
+  <text x="1000" y="1253" class="small">Dedicated log groups · 30-day retention</text>
+
+  <!-- Safety footer -->
+  <rect x="88" y="1320" width="1424" height="30" rx="15" fill="#c9f896" fill-opacity=".085" stroke="#c9f896" stroke-opacity=".2"/>
+  <circle cx="112" cy="1335" r="4" fill="#c9f896"/>
+  <text x="128" y="1340" class="tiny">SAFETY BY DESIGN</text>
+  <text x="312" y="1340" class="small">No URLs fetched</text>
+  <circle cx="448" cy="1335" r="3" fill="#667590"/>
+  <text x="468" y="1340" class="small">Pending reports stay private until review</text>
+  <circle cx="825" cy="1335" r="3" fill="#667590"/>
+  <text x="845" y="1340" class="small">Sample indicators are labeled as synthetic</text>
+</svg>
