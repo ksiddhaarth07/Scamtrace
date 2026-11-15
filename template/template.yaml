@@ -166,7 +166,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'ScamTraceFunction-${AWS::StackName}'
       Description: ScamTrace API handler — analyze, reports, signals, moderate
-      CodeUri: src/
+      CodeUri: ../src/
       Handler: handler.handler
       # Reference the explicit log group so SAM does not create a default one.
       LoggingConfig:
